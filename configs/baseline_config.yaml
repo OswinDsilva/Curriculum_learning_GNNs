@@ -1,0 +1,10 @@
+dataset: cora
+model: gcn
+seed: 42
+val_ratio: 0.05
+test_ratio: 0.10
+hidden_channels: 128
+out_channels: 64
+num_layers: 2
+dropout: 0.5
+decoder: inner_product

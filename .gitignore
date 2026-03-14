@@ -1,0 +1,41 @@
+# Virtual environment
+.venv/
+
+# Downloaded datasets
+data/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Model checkpoints
+checkpoints/
+
+# Training logs and TensorBoard
+logs/
+
+# Experiment results
+results/
+
+# Pre-computed heuristic scores
+*.npz
+
+# Jupyter notebook checkpoints
+.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+
+# Editor / OS files
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Compiled C extensions
+*.so
+*.egg-info/
+dist/
+build/
