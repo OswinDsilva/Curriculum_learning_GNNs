@@ -1,0 +1,36 @@
+dataset: cora
+model: gcn
+heuristic: cn
+seed: 42
+val_ratio: 0.05
+test_ratio: 0.10
+hidden_channels: 128
+out_channels: 64
+num_layers: 2
+dropout: 0.5
+lr: 0.01
+epochs: 300
+eval_every: 10
+neg_ratio: 1
+decoder: inner_product
+adaptive: true
+fixed_phase_epochs: 75
+competence_window: 5
+difficulty_thresholds: [0, 2, 5]
+phases:
+  - ratios: [1.0, 0.0, 0.0]
+    threshold: 0.75
+    name: easy_only
+  - ratios: [0.7, 0.3, 0.0]
+    threshold: 0.85
+    name: easy_medium
+  - ratios: [0.3, 0.4, 0.3]
+    threshold: 0.90
+    name: mixed
+  - ratios: [0.0, 0.3, 0.7]
+    threshold: null
+    name: hard_focus
+save_dir: results/curriculum
+checkpoint_dir: checkpoints
+log_dir: logs
+precomputed_dir: data/precomputed
