@@ -13,6 +13,7 @@ from negative_sampling.heuristics import (
     resource_allocation_score,
     compute_heuristic_scores,
 )
+from negative_sampling.heart import HeaRTEvaluator
 from negative_sampling.sampler import DifficultyBasedSampler
 
 __all__ = [
@@ -20,5 +21,6 @@ __all__ = [
     "adamic_adar_score",
     "resource_allocation_score",
     "compute_heuristic_scores",
+    "HeaRTEvaluator",
     "DifficultyBasedSampler",
 ]

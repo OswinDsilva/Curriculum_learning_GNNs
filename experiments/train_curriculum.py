@@ -16,28 +16,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from curriculum import CurriculumScheduler
 from experiments.train_baseline import build_model, evaluate
 from models.base import LinkPredictor
+from negative_sampling.heart import HeaRTEvaluator, resolve_heuristic_name
 from negative_sampling.sampler import DifficultyBasedSampler
 from utils.data_utils import prepare_link_prediction_data
 from utils.logging_utils import CheckpointManager, ExperimentLogger
-
-
-HEURISTIC_ALIASES = {
-    "cn": "common_neighbors",
-    "common_neighbors": "common_neighbors",
-    "aa": "adamic_adar",
-    "adamic_adar": "adamic_adar",
-    "ra": "resource_allocation",
-    "resource_allocation": "resource_allocation",
-}
-
-
-def resolve_heuristic_name(name: str) -> str:
-    normalized = name.lower().strip()
-    if normalized not in HEURISTIC_ALIASES:
-        raise ValueError(
-            f"Unknown heuristic '{name}'. Choose from {sorted(HEURISTIC_ALIASES)}."
-        )
-    return HEURISTIC_ALIASES[normalized]
 
 
 def load_precomputed_candidates(
@@ -196,6 +178,9 @@ def main() -> None:
     parser.add_argument("--adaptive", action="store_true")
     parser.add_argument("--fixed_phase_epochs", type=int, default=75)
     parser.add_argument("--competence_window", type=int, default=5)
+    parser.add_argument("--heart", action="store_true")
+    parser.add_argument("--heart_heuristic", action="append", default=[])
+    parser.add_argument("--num_neg_per_pos", type=int, default=100)
     parser.add_argument("--no_tensorboard", action="store_true")
     args = parser.parse_args()
 
@@ -251,10 +236,26 @@ def main() -> None:
         checkpoint_manager=checkpoint_manager,
         neg_ratio=args.neg_ratio,
     )
+    heart_metrics: Dict[str, float] = {}
+    if args.heart:
+        heuristics = args.heart_heuristic or [args.heuristic]
+        heart = HeaRTEvaluator(
+            data=data_dict["data"],
+            heuristics=[resolve_heuristic_name(h) for h in heuristics],
+            num_neg_per_pos=args.num_neg_per_pos,
+            precomputed_dir=args.precomputed_dir,
+            seed=args.seed,
+            dataset_name=args.dataset,
+        )
+        heart_metrics = heart.evaluate_model(model, data_dict, device)
 
     print("\n=== Test Results ===")
     for key, value in results["test_metrics"].items():
         print(f"  {key}: {value:.4f}")
+    if heart_metrics:
+        print("\n=== HeaRT Results ===")
+        for key, value in heart_metrics.items():
+            print(f"  {key}: {value:.4f}")
 
     Path(args.save_dir).mkdir(parents=True, exist_ok=True)
     result_path = Path(args.save_dir) / f"{exp_name}.json"
@@ -262,6 +263,7 @@ def main() -> None:
     payload = {
         "config": vars(args),
         "standard": results["test_metrics"],
+        "heart": heart_metrics,
         "phase_summary": results["phase_summary"],
         "last_val_metrics": results["last_val_metrics"],
         "final_loss": results["final_loss"],

@@ -122,6 +122,10 @@ def precompute(
 
     if output_dir is None:
         output_dir = _PROJECT_ROOT / "data" / "precomputed"
+    else:
+        output_dir = Path(output_dir)
+        if not output_dir.is_absolute():
+            output_dir = _PROJECT_ROOT / output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
 
     out_path = output_dir / f"{dataset}_{heuristic}.npz"
