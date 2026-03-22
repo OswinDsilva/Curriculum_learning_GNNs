@@ -13,7 +13,7 @@ from torch import Tensor
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from curriculum import CurriculumScheduler
+from curriculum import CurriculumPhase, CurriculumScheduler, DEFAULT_PHASES
 from experiments.train_baseline import build_model, evaluate
 from models.base import LinkPredictor
 from negative_sampling.heart import HeaRTEvaluator, resolve_heuristic_name
@@ -41,6 +41,55 @@ def load_precomputed_candidates(
     return candidates, scores
 
 
+def build_curriculum_phases(preset: str) -> list[CurriculumPhase]:
+    preset = preset.lower().strip()
+    default = list(DEFAULT_PHASES)
+
+    if preset == "default":
+        return default
+    if preset == "hard_from_start":
+        return [CurriculumPhase([0.0, 0.3, 0.7], threshold=None, name="hard_focus")]
+    if preset == "static_easy_hard":
+        return [
+            CurriculumPhase([0.5, 0.0, 0.5], threshold=None, name="static_easy_hard")
+        ]
+    if preset == "skip_mixed":
+        return [default[0], default[1], default[3]]
+    if preset == "extra_intermediate":
+        return [
+            default[0],
+            default[1],
+            CurriculumPhase([0.5, 0.4, 0.1], threshold=0.88, name="bridge"),
+            default[2],
+            default[3],
+        ]
+    if preset == "low_thresholds":
+        return [
+            CurriculumPhase([1.0, 0.0, 0.0], threshold=0.65, name="easy_only"),
+            CurriculumPhase([0.7, 0.3, 0.0], threshold=0.75, name="easy_medium"),
+            CurriculumPhase([0.3, 0.4, 0.3], threshold=0.82, name="mixed"),
+            CurriculumPhase([0.0, 0.3, 0.7], threshold=None, name="hard_focus"),
+        ]
+    if preset == "high_thresholds":
+        return [
+            CurriculumPhase([1.0, 0.0, 0.0], threshold=0.80, name="easy_only"),
+            CurriculumPhase([0.7, 0.3, 0.0], threshold=0.90, name="easy_medium"),
+            CurriculumPhase([0.3, 0.4, 0.3], threshold=0.95, name="mixed"),
+            CurriculumPhase([0.0, 0.3, 0.7], threshold=None, name="hard_focus"),
+        ]
+    raise ValueError(f"Unknown curriculum preset '{preset}'.")
+
+
+def resolve_experiment_condition(args: argparse.Namespace) -> str:
+    if args.experiment_condition:
+        return args.experiment_condition
+    if args.curriculum_preset != "default":
+        return args.curriculum_preset
+    if args.adaptive:
+        return "curriculum"
+    return "fixed_epoch"
+
+
 def train_epoch_with_negatives(
     model: LinkPredictor,
     data_dict: Dict[str, Any],
@@ -64,10 +113,12 @@ def train_epoch_with_negatives(
     neg_logits = model.decode(z, neg_edge_index)
 
     logits = torch.cat([pos_logits, neg_logits])
-    labels = torch.cat([
-        torch.ones(num_pos, device=device),
-        torch.zeros(num_neg, device=device),
-    ])
+    labels = torch.cat(
+        [
+            torch.ones(num_pos, device=device),
+            torch.zeros(num_neg, device=device),
+        ]
+    )
 
     loss = F.binary_cross_entropy_with_logits(logits, labels)
     loss.backward()
@@ -130,7 +181,9 @@ def train_with_curriculum(
                 logger.log_epoch(epoch, last_loss, val_metrics, extra=extra)
 
             if scheduler.phase_changed:
-                print(f"Epoch {epoch}: transitioned to phase {scheduler.current_phase_idx}")
+                print(
+                    f"Epoch {epoch}: transitioned to phase {scheduler.current_phase_idx}"
+                )
 
             if checkpoint_manager is not None:
                 checkpoint_manager.save(
@@ -155,7 +208,9 @@ def train_with_curriculum(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Curriculum GNN link prediction training")
+    parser = argparse.ArgumentParser(
+        description="Curriculum GNN link prediction training"
+    )
     parser.add_argument("--dataset", type=str, default="cora")
     parser.add_argument("--model", type=str, default="gcn", choices=["gcn", "gat"])
     parser.add_argument("--heuristic", type=str, default="cn")
@@ -178,6 +233,21 @@ def main() -> None:
     parser.add_argument("--adaptive", action="store_true")
     parser.add_argument("--fixed_phase_epochs", type=int, default=75)
     parser.add_argument("--competence_window", type=int, default=5)
+    parser.add_argument(
+        "--curriculum_preset",
+        type=str,
+        default="default",
+        choices=[
+            "default",
+            "hard_from_start",
+            "static_easy_hard",
+            "skip_mixed",
+            "extra_intermediate",
+            "low_thresholds",
+            "high_thresholds",
+        ],
+    )
+    parser.add_argument("--experiment_condition", type=str, default=None)
     parser.add_argument("--heart", action="store_true")
     parser.add_argument("--heart_heuristic", action="append", default=[])
     parser.add_argument("--num_neg_per_pos", type=int, default=100)
@@ -201,7 +271,9 @@ def main() -> None:
         args.precomputed_dir,
     )
     sampler = DifficultyBasedSampler(candidates, scores, seed=args.seed)
+    phases = build_curriculum_phases(args.curriculum_preset)
     scheduler = CurriculumScheduler(
+        phases=phases,
         adaptive=args.adaptive,
         fixed_phase_epochs=args.fixed_phase_epochs,
         competence_window=args.competence_window,
@@ -210,9 +282,10 @@ def main() -> None:
     model = build_model(args, num_features=data_dict["num_features"]).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 
-    exp_name = (
-        f"{args.dataset}_{args.model}_{resolve_heuristic_name(args.heuristic)}_seed{args.seed}"
-    )
+    condition = resolve_experiment_condition(args)
+    exp_name = f"{args.dataset}_{args.model}_{resolve_heuristic_name(args.heuristic)}_seed{args.seed}"
+    if condition not in {"curriculum", "fixed_epoch"}:
+        exp_name = f"{condition}_{args.dataset}_{args.model}_seed{args.seed}"
     logger = ExperimentLogger(
         log_dir=args.log_dir,
         experiment_name=exp_name,
@@ -262,8 +335,10 @@ def main() -> None:
     epoch_csv_path = Path(args.save_dir) / f"{exp_name}_epochs.csv"
     payload = {
         "config": vars(args),
+        "condition": condition,
         "standard": results["test_metrics"],
         "heart": heart_metrics,
+        "phase_history": results["phase_summary"]["phase_history"],
         "phase_summary": results["phase_summary"],
         "last_val_metrics": results["last_val_metrics"],
         "final_loss": results["final_loss"],

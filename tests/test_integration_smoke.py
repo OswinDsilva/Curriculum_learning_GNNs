@@ -4,7 +4,11 @@ import torch
 import torch.nn.functional as F
 
 from models import GCN
-from utils.data_utils import get_random_negatives, prepare_link_prediction_data, to_undirected_unique
+from utils.data_utils import (
+    get_random_negatives,
+    prepare_link_prediction_data,
+    to_undirected_unique,
+)
 
 
 def test_single_training_step_smoke() -> None:

@@ -32,7 +32,9 @@ class CompetenceMeter:
         if self._ema_value is None:
             self._ema_value = value
         else:
-            self._ema_value = self.ema_alpha * value + (1.0 - self.ema_alpha) * self._ema_value
+            self._ema_value = (
+                self.ema_alpha * value + (1.0 - self.ema_alpha) * self._ema_value
+            )
 
     def get_competence(self) -> float:
         if not self._history:

@@ -78,9 +78,9 @@ class DifficultyBasedSampler:
         t1 = n // 3
         t2 = 2 * (n // 3)
         self._bucket_indices: dict[BucketName, np.ndarray] = {
-            "easy":   sorted_idx[:t1],
+            "easy": sorted_idx[:t1],
             "medium": sorted_idx[t1:t2],
-            "hard":   sorted_idx[t2:],
+            "hard": sorted_idx[t2:],
         }
 
     def get_bucket_sizes(self) -> dict[BucketName, int]:
@@ -128,9 +128,7 @@ class DifficultyBasedSampler:
             ValueError: if bucket name is invalid.
         """
         if bucket not in self._BUCKETS:
-            raise ValueError(
-                f"Unknown bucket '{bucket}'. Choose from {self._BUCKETS}."
-            )
+            raise ValueError(f"Unknown bucket '{bucket}'. Choose from {self._BUCKETS}.")
         pool = self._bucket_indices[bucket]
         if len(pool) == 0:
             raise RuntimeError(f"Bucket '{bucket}' is empty.")
@@ -161,9 +159,7 @@ class DifficultyBasedSampler:
         """
         weights = list(weights)
         if len(weights) != 3:
-            raise ValueError(
-                f"weights must have length 3, got {len(weights)}."
-            )
+            raise ValueError(f"weights must have length 3, got {len(weights)}.")
         total_w = sum(weights)
         if total_w <= 0:
             raise ValueError("weights must sum to a positive value.")

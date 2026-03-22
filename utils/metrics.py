@@ -11,10 +11,12 @@ from torch import Tensor
 def compute_auc_ap(pos_scores: Tensor, neg_scores: Tensor) -> Dict[str, float]:
     """Compute AUC-ROC and Average Precision from positive and negative edge scores."""
     scores = torch.cat([pos_scores, neg_scores]).detach().cpu().numpy()
-    labels = np.concatenate([
-        np.ones(len(pos_scores), dtype=np.int32),
-        np.zeros(len(neg_scores), dtype=np.int32),
-    ])
+    labels = np.concatenate(
+        [
+            np.ones(len(pos_scores), dtype=np.int32),
+            np.zeros(len(neg_scores), dtype=np.int32),
+        ]
+    )
     return {
         "auc": float(roc_auc_score(labels, scores)),
         "ap": float(average_precision_score(labels, scores)),

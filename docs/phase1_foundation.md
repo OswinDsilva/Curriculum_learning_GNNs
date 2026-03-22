@@ -67,8 +67,7 @@ tqdm==4.66.2
 pyyaml==6.0.1
 tensorboard==2.16.2
 pytest==8.0.2
-black==24.2.0
-flake8==7.0.0
+ruff==0.11.0
 ```
 
 ### Common failures and fixes

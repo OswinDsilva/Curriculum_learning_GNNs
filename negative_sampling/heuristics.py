@@ -30,6 +30,7 @@ import torch
 # Per-pair score functions
 # ---------------------------------------------------------------------------
 
+
 def common_neighbors_score(G: nx.Graph, src: np.ndarray, dst: np.ndarray) -> np.ndarray:
     """Return |N(u) ∩ N(v)| for each (src[i], dst[i]) pair.
 
@@ -84,7 +85,9 @@ def adamic_adar_score(G: nx.Graph, src: np.ndarray, dst: np.ndarray) -> np.ndarr
     return scores
 
 
-def resource_allocation_score(G: nx.Graph, src: np.ndarray, dst: np.ndarray) -> np.ndarray:
+def resource_allocation_score(
+    G: nx.Graph, src: np.ndarray, dst: np.ndarray
+) -> np.ndarray:
     """Return Resource Allocation index for each (src[i], dst[i]) pair.
 
     Nodes with degree 0 (isolated) are skipped.
@@ -150,8 +153,7 @@ def compute_heuristic_scores(
     """
     if heuristic not in _SCORE_FN:
         raise ValueError(
-            f"Unknown heuristic '{heuristic}'. "
-            f"Choose from {list(_SCORE_FN.keys())}."
+            f"Unknown heuristic '{heuristic}'. Choose from {list(_SCORE_FN.keys())}."
         )
 
     # Build undirected graph from training edges

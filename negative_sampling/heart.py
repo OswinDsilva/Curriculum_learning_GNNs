@@ -10,10 +10,16 @@ from torch import Tensor
 from torch_geometric.data import Data
 
 from models.base import LinkPredictor
-from utils.data_utils import canonicalize_edge, edge_index_to_edge_set, get_random_negatives
+from utils.data_utils import (
+    canonicalize_edge,
+    edge_index_to_edge_set,
+    get_random_negatives,
+)
 
 
-HeuristicAlias = Literal["cn", "aa", "ra", "common_neighbors", "adamic_adar", "resource_allocation"]
+HeuristicAlias = Literal[
+    "cn", "aa", "ra", "common_neighbors", "adamic_adar", "resource_allocation"
+]
 
 HEURISTIC_ALIASES = {
     "cn": "common_neighbors",
@@ -53,7 +59,9 @@ class HeaRTEvaluator:
         dataset_name: str | None = None,
     ) -> None:
         self.data = data
-        self.heuristics = [resolve_heuristic_name(h) for h in (heuristics or ["cn", "aa", "ra"])]
+        self.heuristics = [
+            resolve_heuristic_name(h) for h in (heuristics or ["cn", "aa", "ra"])
+        ]
         self.num_neg_per_pos = num_neg_per_pos
         self.precomputed_dir = Path(precomputed_dir)
         self.seed = seed
@@ -70,7 +78,9 @@ class HeaRTEvaluator:
                 path = self.precomputed_dir / f"{self.dataset_name}_{heuristic}.npz"
                 matches = [path] if path.exists() else []
             elif matches:
-                matches = [p for p in matches if self._precomputed_matches_graph(p)] or matches
+                matches = [
+                    p for p in matches if self._precomputed_matches_graph(p)
+                ] or matches
             if not matches:
                 raise FileNotFoundError(
                     f"Missing precomputed scores for heuristic '{heuristic}' in {self.precomputed_dir}. "
@@ -83,7 +93,9 @@ class HeaRTEvaluator:
             scores = payload["scores"].astype(np.float32, copy=False)
 
             node_to_indices: dict[int, list[int]] = defaultdict(list)
-            for idx, (u, v) in enumerate(zip(candidates[0].tolist(), candidates[1].tolist())):
+            for idx, (u, v) in enumerate(
+                zip(candidates[0].tolist(), candidates[1].tolist())
+            ):
                 node_to_indices[int(u)].append(idx)
                 node_to_indices[int(v)].append(idx)
 
@@ -110,9 +122,16 @@ class HeaRTEvaluator:
             candidates = pool["candidates"]
             indices = node_to_indices.get(u, []) + node_to_indices.get(v, [])
             for idx in indices:
-                pair = canonicalize_edge(int(candidates[0][idx]), int(candidates[1][idx]))
+                pair = canonicalize_edge(
+                    int(candidates[0][idx]), int(candidates[1][idx])
+                )
                 merged[pair] = max(merged.get(pair, float("-inf")), float(scores[idx]))
-        return [pair for pair, _ in sorted(merged.items(), key=lambda item: item[1], reverse=True)]
+        return [
+            pair
+            for pair, _ in sorted(
+                merged.items(), key=lambda item: item[1], reverse=True
+            )
+        ]
 
     def _fallback_negatives(
         self,
@@ -123,8 +142,17 @@ class HeaRTEvaluator:
         if count <= 0:
             return torch.empty((2, 0), dtype=torch.long)
         pos_edges = list(excluded)
-        edge_index = torch.tensor(pos_edges, dtype=torch.long).t().contiguous() if pos_edges else torch.empty((2, 0), dtype=torch.long)
-        return get_random_negatives(edge_index=edge_index, num_nodes=num_nodes, num_samples=count, seed=int(self._rng.integers(0, 1_000_000)))
+        edge_index = (
+            torch.tensor(pos_edges, dtype=torch.long).t().contiguous()
+            if pos_edges
+            else torch.empty((2, 0), dtype=torch.long)
+        )
+        return get_random_negatives(
+            edge_index=edge_index,
+            num_nodes=num_nodes,
+            num_samples=count,
+            seed=int(self._rng.integers(0, 1_000_000)),
+        )
 
     def generate_test_set(self, pos_edge_index: Tensor) -> tuple[Tensor, list[Tensor]]:
         hard_negs_per_pos: list[Tensor] = []
@@ -149,7 +177,9 @@ class HeaRTEvaluator:
                     num_nodes=num_nodes,
                     count=self.num_neg_per_pos - len(selected_pairs),
                 )
-                selected_pairs.extend(list(zip(fallback[0].tolist(), fallback[1].tolist())))
+                selected_pairs.extend(
+                    list(zip(fallback[0].tolist(), fallback[1].tolist()))
+                )
 
             hard_negs_per_pos.append(
                 torch.tensor(selected_pairs, dtype=torch.long).t().contiguous()

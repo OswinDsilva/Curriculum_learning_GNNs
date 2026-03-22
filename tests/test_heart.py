@@ -102,7 +102,12 @@ def test_evaluate_model_returns_heart_metrics() -> None:
         model = _DummyModel()
         metrics = evaluator.evaluate_model(model, data_dict, torch.device("cpu"))
 
-        assert set(metrics) == {"heart_mrr", "heart_hits@10", "heart_hits@50", "heart_hits@100"}
+        assert set(metrics) == {
+            "heart_mrr",
+            "heart_hits@10",
+            "heart_hits@50",
+            "heart_hits@100",
+        }
         assert metrics["heart_mrr"] > 0.0
 
 
@@ -122,7 +127,9 @@ def test_run_evaluation_merges_heart_metrics() -> None:
             seed=0,
         )
         model = _DummyModel()
-        metrics = run_evaluation(model, data_dict, torch.device("cpu"), heart_evaluator=evaluator)
+        metrics = run_evaluation(
+            model, data_dict, torch.device("cpu"), heart_evaluator=evaluator
+        )
 
         assert "auc" in metrics
         assert "heart_mrr" in metrics

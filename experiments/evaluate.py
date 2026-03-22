@@ -27,7 +27,9 @@ def run_evaluation(
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Evaluate a trained link prediction model")
+    parser = argparse.ArgumentParser(
+        description="Evaluate a trained link prediction model"
+    )
     parser.add_argument("--checkpoint", type=str, required=True)
     parser.add_argument("--dataset", type=str, default="cora")
     parser.add_argument("--model", type=str, default="gcn", choices=["gcn", "gat"])

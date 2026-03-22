@@ -53,6 +53,7 @@ HEURISTICS: list[HeuristicName] = [
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _sample_candidate_negatives(
     num_nodes: int,
     train_pos_edge_index: torch.Tensor,
@@ -95,6 +96,7 @@ def _sample_candidate_negatives(
 # ---------------------------------------------------------------------------
 # Core function
 # ---------------------------------------------------------------------------
+
 
 def precompute(
     dataset: str,
@@ -155,9 +157,13 @@ def precompute(
     # 2. Generate candidate negatives
     n_candidates = neg_ratio * n_pos
     if verbose:
-        print(f"  Generating {n_candidates:,} candidate negatives (ratio={neg_ratio}x)…")
+        print(
+            f"  Generating {n_candidates:,} candidate negatives (ratio={neg_ratio}x)…"
+        )
 
-    candidates = _sample_candidate_negatives(num_nodes, train_pos, n_candidates, seed=seed)
+    candidates = _sample_candidate_negatives(
+        num_nodes, train_pos, n_candidates, seed=seed
+    )
 
     # 3. Score
     if verbose:
@@ -175,7 +181,7 @@ def precompute(
         nonzero = int((scores > 0).sum())
         print(
             f"  Done in {elapsed:.1f}s | nonzero scores: "
-            f"{nonzero}/{len(scores)} ({100*nonzero/len(scores):.1f}%)"
+            f"{nonzero}/{len(scores)} ({100 * nonzero / len(scores):.1f}%)"
         )
 
     # 4. Save
@@ -197,6 +203,7 @@ def precompute(
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
+
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(
@@ -248,11 +255,13 @@ def parse_args() -> argparse.Namespace:
 def main() -> None:
     args = parse_args()
 
-    datasets = DATASETS if args.all_datasets else (
-        [args.dataset] if args.dataset else None
+    datasets = (
+        DATASETS if args.all_datasets else ([args.dataset] if args.dataset else None)
     )
-    heuristics = HEURISTICS if args.all_heuristics else (
-        [args.heuristic] if args.heuristic else None
+    heuristics = (
+        HEURISTICS
+        if args.all_heuristics
+        else ([args.heuristic] if args.heuristic else None)
     )
 
     if datasets is None or heuristics is None:

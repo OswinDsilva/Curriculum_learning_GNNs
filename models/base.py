@@ -79,6 +79,8 @@ class LinkPredictor(nn.Module, ABC):
             raise RuntimeError("Learned decoder is not initialized.")
         return self.learned_decoder(z, edge_label_index)
 
-    def forward(self, x: Tensor, edge_index: Tensor, edge_label_index: Tensor) -> Tensor:
+    def forward(
+        self, x: Tensor, edge_index: Tensor, edge_label_index: Tensor
+    ) -> Tensor:
         z = self.encode(x, edge_index)
         return self.decode(z, edge_label_index)

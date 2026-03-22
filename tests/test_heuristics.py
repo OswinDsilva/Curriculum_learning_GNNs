@@ -53,6 +53,7 @@ from negative_sampling.heuristics import (
 # Shared fixture: build the reference graph
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture()
 def ref_graph() -> nx.Graph:
     G = nx.Graph()
@@ -68,6 +69,7 @@ def _arr(*vals: int) -> np.ndarray:
 # ---------------------------------------------------------------------------
 # common_neighbors_score
 # ---------------------------------------------------------------------------
+
 
 class TestCommonNeighbors:
     def test_single_common_neighbor(self, ref_graph):
@@ -114,6 +116,7 @@ class TestCommonNeighbors:
 # adamic_adar_score
 # ---------------------------------------------------------------------------
 
+
 class TestAdamicAdar:
     def test_known_value_0_3(self, ref_graph):
         # common = {1}, deg(1) = 3  →  AA = 1/log(3)
@@ -132,7 +135,7 @@ class TestAdamicAdar:
         # Build a graph where the only common neighbor has deg=1.
         G = nx.Graph()
         G.add_nodes_from([0, 1, 2])
-        G.add_edges_from([(0, 2), (1, 2)])   # common={2}, deg(2)=2, ok
+        G.add_edges_from([(0, 2), (1, 2)])  # common={2}, deg(2)=2, ok
         # Now isolate 2 to deg=1 by removing 0-2, keeping only 1-2
         G2 = nx.Graph()
         G2.add_nodes_from([0, 1, 2, 3])
@@ -145,7 +148,7 @@ class TestAdamicAdar:
         # But (0,1) has no common neighbors here anyway; let's be direct:
         G4 = nx.Graph()
         G4.add_nodes_from([0, 1, 2])
-        G4.add_edges_from([(0, 2), (1, 2)])   # deg(2)=2 → NOT excluded
+        G4.add_edges_from([(0, 2), (1, 2)])  # deg(2)=2 → NOT excluded
         G4.remove_edge(0, 2)  # now deg(2)=1 → excluded
         # (0,1) no longer has 2 as common neighbor (no edge 0-2)
         scores = adamic_adar_score(G4, _arr(0), _arr(1))
@@ -164,6 +167,7 @@ class TestAdamicAdar:
 # ---------------------------------------------------------------------------
 # resource_allocation_score
 # ---------------------------------------------------------------------------
+
 
 class TestResourceAllocation:
     def test_known_value_0_3(self, ref_graph):
@@ -195,13 +199,13 @@ class TestResourceAllocation:
 # compute_heuristic_scores (high-level helper)
 # ---------------------------------------------------------------------------
 
+
 class TestComputeHeuristicScores:
     """Test the end-to-end edge_index → scores pipeline."""
 
     # Build a small training graph: edges 0-1, 0-2, 1-2, 1-3
     _EDGE_INDEX = torch.tensor(
-        [[0, 1, 0, 2, 1, 2, 1, 3],
-         [1, 0, 2, 0, 2, 1, 3, 1]],
+        [[0, 1, 0, 2, 1, 2, 1, 3], [1, 0, 2, 0, 2, 1, 3, 1]],
         dtype=torch.long,
     )
     _NUM_NODES = 4
@@ -243,8 +247,7 @@ class TestComputeHeuristicScores:
 
     def test_batch_shape(self):
         negatives = torch.tensor(
-            [[0, 2, 3],
-             [3, 3, 0]],
+            [[0, 2, 3], [3, 3, 0]],
             dtype=torch.long,
         )
         scores = compute_heuristic_scores(

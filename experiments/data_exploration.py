@@ -28,7 +28,9 @@ def compute_graph_statistics(data: Data) -> Dict[str, float]:
     }
 
 
-def summarize_link_prediction_splits(split_dict: Dict[str, torch.Tensor]) -> Dict[str, int]:
+def summarize_link_prediction_splits(
+    split_dict: Dict[str, torch.Tensor],
+) -> Dict[str, int]:
     return {
         "train_pos": int(split_dict["train_pos_edge_index"].size(1)),
         "val_pos": int(split_dict["val_pos_edge_index"].size(1)),
@@ -39,7 +41,9 @@ def summarize_link_prediction_splits(split_dict: Dict[str, torch.Tensor]) -> Dic
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Dataset exploration for link prediction")
+    parser = argparse.ArgumentParser(
+        description="Dataset exploration for link prediction"
+    )
     parser.add_argument("--dataset", type=str, default="cora")
     parser.add_argument("--root", type=str, default="data")
     parser.add_argument("--seed", type=int, default=42)

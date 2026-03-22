@@ -21,7 +21,9 @@ def canonicalize_edge(u: int, v: int) -> tuple[int, int]:
     return (u, v) if u < v else (v, u)
 
 
-def _pairs_to_edge_index(pairs: list[tuple[int, int]], undirected: bool = False) -> Tensor:
+def _pairs_to_edge_index(
+    pairs: list[tuple[int, int]], undirected: bool = False
+) -> Tensor:
     if not pairs:
         return torch.empty((2, 0), dtype=torch.long)
 
@@ -47,7 +49,9 @@ def load_dataset(name: DatasetName, root: str | Path = "data") -> InMemoryDatase
     }
 
     if normalized in planetoid_map:
-        return Planetoid(root=str(root_path / "Planetoid"), name=planetoid_map[normalized])
+        return Planetoid(
+            root=str(root_path / "Planetoid"), name=planetoid_map[normalized]
+        )
     if normalized in coauthor_map:
         return Coauthor(root=str(root_path / "Coauthor"), name=coauthor_map[normalized])
 

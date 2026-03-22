@@ -9,6 +9,7 @@ import torch
 from curriculum.competence import CompetenceMeter
 from curriculum.scheduler import CurriculumPhase, CurriculumScheduler
 from experiments.train_curriculum import (
+    build_curriculum_phases,
     load_precomputed_candidates,
     resolve_heuristic_name,
 )
@@ -119,3 +120,23 @@ def test_load_precomputed_candidates_missing_file() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         with pytest.raises(FileNotFoundError, match="Run scripts/precompute_scores.py"):
             load_precomputed_candidates("cora", "cn", tmp)
+
+
+def test_build_curriculum_phases_skip_mixed() -> None:
+    phases = build_curriculum_phases("skip_mixed")
+    assert [phase.name for phase in phases] == [
+        "easy_only",
+        "easy_medium",
+        "hard_focus",
+    ]
+
+
+def test_build_curriculum_phases_static_easy_hard() -> None:
+    phases = build_curriculum_phases("static_easy_hard")
+    assert len(phases) == 1
+    assert phases[0].difficulty_ratios == [0.5, 0.0, 0.5]
+
+
+def test_build_curriculum_phases_invalid() -> None:
+    with pytest.raises(ValueError, match="Unknown curriculum preset"):
+        build_curriculum_phases("invalid")

@@ -71,7 +71,9 @@ class CurriculumScheduler:
         self.phase_changed = True
         self.phase_history.append((epoch, self.current_phase.name))
         self.competence_meter.reset()
-        print(f"[Epoch {epoch}] Advancing to Phase {self.current_phase_idx}: {self.current_phase.name}")
+        print(
+            f"[Epoch {epoch}] Advancing to Phase {self.current_phase_idx}: {self.current_phase.name}"
+        )
 
     def get_current_difficulty_ratios(self) -> list[float]:
         return list(self.current_phase.difficulty_ratios)

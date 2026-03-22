@@ -29,6 +29,7 @@ from utils.metrics import compute_all_metrics
 # Core training / evaluation functions
 # ---------------------------------------------------------------------------
 
+
 def train_epoch(
     model: LinkPredictor,
     data_dict: Dict,
@@ -48,9 +49,7 @@ def train_epoch(
     num_pos = pos_edge_index.size(1)
     num_neg = num_pos * neg_ratio
 
-    all_pos = to_undirected_unique(
-        data_dict["data"].edge_index, data_dict["num_nodes"]
-    )
+    all_pos = to_undirected_unique(data_dict["data"].edge_index, data_dict["num_nodes"])
     neg_edge_index = get_random_negatives(
         edge_index=all_pos,
         num_nodes=data_dict["num_nodes"],
@@ -63,10 +62,12 @@ def train_epoch(
     neg_logits = model.decode(z, neg_edge_index)
 
     logits = torch.cat([pos_logits, neg_logits])
-    labels = torch.cat([
-        torch.ones(num_pos, device=device),
-        torch.zeros(num_neg, device=device),
-    ])
+    labels = torch.cat(
+        [
+            torch.ones(num_pos, device=device),
+            torch.zeros(num_neg, device=device),
+        ]
+    )
 
     loss = F.binary_cross_entropy_with_logits(logits, labels)
     loss.backward()
@@ -102,6 +103,7 @@ def evaluate(
 # Build model helper
 # ---------------------------------------------------------------------------
 
+
 def build_model(args: argparse.Namespace, num_features: int) -> LinkPredictor:
     """Instantiate GCN or GAT from parsed args."""
     kwargs = dict(
@@ -123,8 +125,11 @@ def build_model(args: argparse.Namespace, num_features: int) -> LinkPredictor:
 # Main entry point
 # ---------------------------------------------------------------------------
 
+
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Baseline GNN link prediction training")
+    parser = argparse.ArgumentParser(
+        description="Baseline GNN link prediction training"
+    )
     parser.add_argument("--dataset", type=str, default="cora")
     parser.add_argument("--model", type=str, default="gcn", choices=["gcn", "gat"])
     parser.add_argument("--hidden_channels", type=int, default=128)
@@ -146,6 +151,7 @@ def main() -> None:
     parser.add_argument("--heart_heuristic", action="append", default=[])
     parser.add_argument("--num_neg_per_pos", type=int, default=100)
     parser.add_argument("--precomputed_dir", type=str, default="data/precomputed")
+    parser.add_argument("--experiment_condition", type=str, default="baseline")
     parser.add_argument("--no_tensorboard", action="store_true")
     args = parser.parse_args()
 
@@ -173,10 +179,16 @@ def main() -> None:
     # Model
     model = build_model(args, num_features=data_dict["num_features"]).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
-    print(f"Model: {model.__class__.__name__} | params: {sum(p.numel() for p in model.parameters()):,}")
+    print(
+        f"Model: {model.__class__.__name__} | params: {sum(p.numel() for p in model.parameters()):,}"
+    )
 
     # Logging
     exp_name = f"{args.dataset}_{args.model}_seed{args.seed}"
+    if args.experiment_condition != "baseline":
+        exp_name = (
+            f"{args.experiment_condition}_{args.dataset}_{args.model}_seed{args.seed}"
+        )
     logger = ExperimentLogger(
         log_dir=args.log_dir,
         experiment_name=exp_name,
@@ -192,8 +204,9 @@ def main() -> None:
     val_metrics: Dict[str, float] = {}
     for epoch in range(1, args.epochs + 1):
         ep_seed = args.seed * 10000 + epoch
-        loss = train_epoch(model, data_dict, optimizer, device,
-                           neg_ratio=args.neg_ratio, seed=ep_seed)
+        loss = train_epoch(
+            model, data_dict, optimizer, device, neg_ratio=args.neg_ratio, seed=ep_seed
+        )
 
         if epoch % args.eval_every == 0 or epoch == args.epochs:
             val_metrics = evaluate(model, data_dict, "val", device)
@@ -235,6 +248,7 @@ def main() -> None:
     Path(args.save_dir).mkdir(parents=True, exist_ok=True)
     result = {
         "config": vars(args),
+        "condition": args.experiment_condition,
         "standard": test_metrics,
         "heart": heart_metrics,
         "training_time_seconds": round(training_time, 2),

@@ -16,7 +16,7 @@ that turns a working implementation into a finished research project.
 - [ ] Jupyter notebook runs from top to bottom without errors.
 - [ ] README updated with results summary and usage instructions.
 - [ ] All functions have docstrings (Python-style, one-liner minimum).
-- [ ] `black` and `flake8` pass on the entire codebase.
+- [ ] `ruff format` and `ruff check` pass on the entire codebase.
 - [ ] Technical report outline written.
 
 ---
@@ -233,15 +233,21 @@ are most important.
 
 ```bash
 # Format
-.venv/bin/black gnn_curriculum_learning/ --line-length 100
+.venv/bin/ruff format gnn_curriculum_learning/
 
 # Style check
-.venv/bin/flake8 gnn_curriculum_learning/ \
-    --max-line-length 100 \
-    --exclude .venv,data,results,checkpoints,logs
+.venv/bin/ruff check gnn_curriculum_learning/ \
+  --line-length 100 \
+  --exclude .venv,data,results,checkpoints,logs
+
+# Optional auto-fix
+.venv/bin/ruff check gnn_curriculum_learning/ \
+  --line-length 100 \
+  --exclude .venv,data,results,checkpoints,logs \
+  --fix
 ```
 
-Fix all `E501` (line too long) and `F401` (unused import) warnings.
+Fix all reported style and lint violations.
 
 ---
 
@@ -269,8 +275,8 @@ Suggested sections:
 - [ ] Notebook runs clean from top to bottom.
 - [ ] Significance table written to CSV.
 - [ ] README updated with results table.
-- [ ] `black` passes with no output.
-- [ ] `flake8` passes with zero errors (warnings allowed for E501 if addressed).
+- [ ] `ruff format --check` passes with no output.
+- [ ] `ruff check` passes with zero errors.
 - [ ] Technical report outline exists in `docs/report_outline.md`.
 
 ---

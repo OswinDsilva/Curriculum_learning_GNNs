@@ -31,10 +31,12 @@ N = 30  # total candidates
 def sampler() -> DifficultyBasedSampler:
     """Sampler with 30 candidates and scores 0..29."""
     # Candidates: src = index, dst = index+1 (dummy pairs)
-    candidates = torch.stack([
-        torch.arange(N),
-        torch.arange(1, N + 1),
-    ])  # [2, 30]
+    candidates = torch.stack(
+        [
+            torch.arange(N),
+            torch.arange(1, N + 1),
+        ]
+    )  # [2, 30]
     scores = np.arange(N, dtype=np.float32)  # 0, 1, …, 29
     return DifficultyBasedSampler(candidates, scores, seed=0)
 
@@ -42,6 +44,7 @@ def sampler() -> DifficultyBasedSampler:
 # ---------------------------------------------------------------------------
 # Bucket partitioning
 # ---------------------------------------------------------------------------
+
 
 class TestBuckets:
     def test_bucket_sizes_equal_thirds(self, sampler):
@@ -62,6 +65,7 @@ class TestBuckets:
 # ---------------------------------------------------------------------------
 # sample_random
 # ---------------------------------------------------------------------------
+
 
 class TestSampleRandom:
     def test_output_shape(self, sampler):
@@ -93,6 +97,7 @@ class TestSampleRandom:
 # ---------------------------------------------------------------------------
 # sample_by_difficulty
 # ---------------------------------------------------------------------------
+
 
 class TestSampleByDifficulty:
     def test_easy_bucket_returns_low_scores(self, sampler):
@@ -126,6 +131,7 @@ class TestSampleByDifficulty:
 # ---------------------------------------------------------------------------
 # sample_mixed
 # ---------------------------------------------------------------------------
+
 
 class TestSampleMixed:
     def test_total_output_size(self, sampler):
@@ -169,6 +175,7 @@ class TestSampleMixed:
 # ---------------------------------------------------------------------------
 # Mismatched construction arguments
 # ---------------------------------------------------------------------------
+
 
 def test_mismatched_candidates_scores_raises():
     candidates = torch.zeros(2, 10, dtype=torch.long)
