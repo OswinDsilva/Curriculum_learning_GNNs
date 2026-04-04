@@ -281,6 +281,46 @@ Suggested sections:
 
 ---
 
+## Final Results (4 April 2026)
+
+Phase 7 execution is complete with full experiment coverage and regenerated
+analysis artifacts.
+
+### Completed run matrix
+
+- Baseline: 60 runs (3 datasets x 2 models x 10 seeds)
+- Curriculum: 180 runs (3 datasets x 2 models x 3 heuristics x 10 seeds)
+- Ablation: 80 runs (8 conditions x 10 seeds, Cora + GCN)
+
+### Main HeaRT MRR outcome (baseline vs best curriculum per dataset/model)
+
+- Cora + GCN: 0.5055 -> 0.4124 (AA), -18.43%
+- Cora + GAT: 0.5226 -> 0.5140 (RA), -1.65%
+- Citeseer + GCN: 0.4761 -> 0.4593 (CN), -3.53%
+- Citeseer + GAT: 0.5781 -> 0.5435 (RA), -6.00%
+- PubMed + GCN: 0.5420 -> 0.5480 (AA), +1.12%
+- PubMed + GAT: 0.4752 -> 0.4769 (RA), +0.37%
+
+### Statistical summary
+
+- `results/summaries/full_significance_table.csv`: 69 rows total
+- HeaRT MRR rows: 23
+- Significant HeaRT MRR rows (p < 0.05): 4
+
+### Ablation highlight (HeaRT MRR, Cora + GCN)
+
+- Best: `abl-1` = 0.5051
+- Lowest: `abl-4` = 0.3419
+
+### Final artifacts
+
+- Summaries: `results/summaries/`
+- Significance table: `results/summaries/full_significance_table.csv`
+- Figures: `results/figures/`
+- Updated report draft: `docs/paper_first_draft.md`
+
+---
+
 ## Estimated Time
 
 | Task                          | Hours  |

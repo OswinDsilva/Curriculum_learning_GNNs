@@ -6,7 +6,7 @@ Curriculum Learning with Difficulty-Aware Negative Sampling for GNN Link Predict
 
 ## Abstract
 
-This project studies link prediction in graphs. The main idea is simple: instead of training only with easy negative examples, we gradually introduce harder negatives during training. We built baseline models, a difficulty scoring pipeline, a curriculum scheduler, and hard-negative evaluation support. Current results are early and come from smoke tests, not full experiments. On the available Cora + GCN smoke run, curriculum slightly improves HeaRT MRR but slightly reduces some standard metrics. This is a useful early signal, but final conclusions need full multi-seed runs and significance testing.
+This project studies link prediction in graphs using curriculum learning over difficulty-aware negative sampling. Instead of training only with random negatives, we gradually introduce medium and hard negatives during training. The implemented pipeline includes baseline models (GCN, GAT), structural difficulty scoring (CN, AA, RA), an adaptive curriculum scheduler, and HeaRT evaluation. We now report full 10-seed experiments across Cora, Citeseer, and PubMed, plus ablations on Cora + GCN. Final results are mixed: curriculum settings can help on some PubMed configurations, but baseline remains stronger in several Cora and Citeseer settings under the current presets.
 
 ## 1. Introduction
 
@@ -25,7 +25,7 @@ Does a difficulty-based curriculum improve hard-negative evaluation performance 
 3. A sampler that can draw easy, medium, and hard negatives.
 4. A curriculum scheduler with adaptive phase transitions.
 5. HeaRT-style evaluation integrated into training outputs.
-6. Smoke-test outputs for baseline and curriculum.
+6. Full 10-seed outputs for baseline, curriculum, and ablation conditions.
 
 ## 3. Method (Simple Explanation)
 
@@ -73,7 +73,7 @@ We report both:
 
 This helps show whether performance is truly robust or only good on easy negatives.
 
-## 4. Current Experimental Setup
+## 4. Experimental Setup
 
 Planned datasets:
 
@@ -92,94 +92,87 @@ Planned conditions:
 2. Curriculum (CN, AA, RA)
 3. Ablations
 
-Current completed runs are smoke tests on Cora + GCN + seed 0 for both baseline and curriculum.
+Completed run matrix:
 
-## 5. Results So Far (Smoke Tests)
+1. Baseline: 3 datasets x 2 models x 10 seeds = 60 runs.
+2. Curriculum: 3 datasets x 2 models x 3 heuristics x 10 seeds = 180 runs.
+3. Ablations (Cora + GCN): 8 conditions x 10 seeds = 80 runs.
+
+## 5. Results (Full Study)
 
 Data source files:
 
-1. results/baseline_smoke/cora_gcn_seed0.json
-2. results/curriculum_smoke/cora_gcn_common_neighbors_seed0.json
+1. results/summaries/baseline_summary.csv
+2. results/summaries/curriculum_summary.csv
+3. results/summaries/ablation_summary.csv
+4. results/summaries/full_significance_table.csv
 
-### 5.1 Baseline (Cora, GCN, seed 0)
+### 5.1 Baseline vs Best Curriculum (HeaRT MRR, 10-seed means)
 
-Standard:
+1. Cora + GCN: baseline 0.5055 vs best curriculum 0.4124 (AA), -18.43%.
+2. Cora + GAT: baseline 0.5226 vs best curriculum 0.5140 (RA), -1.65%.
+3. Citeseer + GCN: baseline 0.4761 vs best curriculum 0.4593 (CN), -3.53%.
+4. Citeseer + GAT: baseline 0.5781 vs best curriculum 0.5435 (RA), -6.00%.
+5. PubMed + GCN: baseline 0.5420 vs best curriculum 0.5480 (AA), +1.12%.
+6. PubMed + GAT: baseline 0.4752 vs best curriculum 0.4769 (RA), +0.37%.
 
-1. AUC: 0.9138
-2. AP: 0.9274
-3. MRR: 0.3391
-4. Hits@10: 0.0190
-5. Hits@50: 0.0949
-6. Hits@100: 0.1898
+### 5.2 Significance Overview
 
-HeaRT:
+From `full_significance_table.csv`:
 
-1. HeaRT MRR: 0.4324
-2. HeaRT Hits@10: 0.7875
-3. HeaRT Hits@50: 0.9526
-4. HeaRT Hits@100: 0.9981
+1. Total rows: 69.
+2. HeaRT MRR rows: 23.
+3. Significant HeaRT MRR rows (p < 0.05): 4.
 
-### 5.2 Curriculum CN (Cora, GCN, seed 0)
+### 5.3 Ablation Ranking (Cora + GCN, HeaRT MRR)
 
-Standard:
+1. abl-1: 0.5051
+2. abl-10: 0.3880
+3. abl-6: 0.3816
+4. abl-5: 0.3811
+5. abl-3: 0.3664
+6. abl-11: 0.3634
+7. abl-2: 0.3498
+8. abl-4: 0.3419
 
-1. AUC: 0.9036
-2. AP: 0.9180
-3. MRR: 0.2579
-4. Hits@10: 0.0190
-5. Hits@50: 0.0949
-6. Hits@100: 0.1879
+### 5.4 Quick Interpretation
 
-HeaRT:
-
-1. HeaRT MRR: 0.4564
-2. HeaRT Hits@10: 0.7856
-3. HeaRT Hits@50: 0.9488
-4. HeaRT Hits@100: 1.0000
-
-Phase progression observed:
-
-1. Epoch 0: easy_only
-2. Epoch 10: easy_medium
-3. Epoch 30: mixed
-4. Epoch 90: hard_focus
-
-### 5.3 Quick Interpretation
-
-1. HeaRT MRR improved from 0.4324 to 0.4564 (about +5.5% relative).
-2. Some standard metrics became lower in this run.
-3. Result is useful but not final because this is only one seed.
+1. Curriculum does not provide a universal HeaRT MRR improvement under current presets.
+2. Gains appear on PubMed; Cora and Citeseer mainly favor baseline.
+3. Ablation results indicate baseline-like settings remain strongest on Cora + GCN in this run budget.
 
 ## 6. What This Means Right Now
 
-The current evidence suggests a possible tradeoff:
+The full-run evidence indicates a dataset-dependent tradeoff:
 
-1. Better performance on hard-negative ranking.
-2. Slightly weaker performance on standard easy-negative metrics.
+1. Curriculum can match or slightly exceed baseline on some PubMed settings.
+2. Several Cora/Citeseer settings degrade under the tested curriculum schedules.
+3. Threshold and phase design are critical for stable gains.
 
-This is not a final claim yet. Full multi-seed and multi-dataset results are required.
+These are final conclusions for the current experimental design and preset space.
 
 ## 7. Current Status and Limits
 
 What is done:
 
 1. End-to-end baseline and curriculum pipeline is implemented.
-2. Smoke tests are completed and stored.
-3. Draft reporting document is prepared.
+2. Full baseline/curriculum/ablation matrices are completed and aggregated.
+3. Statistical tables and figures are generated from full runs.
+4. Draft reporting document is updated to reflect full-study outcomes.
 
 What is not done yet:
 
-1. Full 10-seed matrix for all settings.
-2. Complete ablation table.
-3. Final significance analysis and confidence intervals.
+1. Broader hyperparameter search for curriculum thresholds and phase ratios.
+2. Additional model families beyond GCN/GAT.
+3. External dataset validation for stronger generalization claims.
 
 ## 8. Immediate Next Steps
 
-1. Run full baseline and curriculum sweeps.
-2. Run ablations.
-3. Aggregate all result files.
-4. Run significance tests.
-5. Update paper tables and final conclusions.
+1. Convert this draft into a final report with polished narrative and figure references.
+2. Expand statistical discussion using confidence intervals and effect sizes.
+3. Investigate why PubMed benefits while Cora/Citeseer degrade under current presets.
+4. Evaluate tuned or dataset-specific curriculum schedules.
+5. Package reproducibility artifacts for submission (commands, hashes, environment snapshot).
 
 ## 9. Term Guide (Meaning and Significance)
 

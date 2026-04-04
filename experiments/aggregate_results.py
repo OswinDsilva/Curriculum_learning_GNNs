@@ -82,7 +82,10 @@ def summarise_rows(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
             grouped[key][metric].append(float(value))
 
     summary_rows: list[dict[str, Any]] = []
-    for key, metrics in sorted(grouped.items()):
+    for key, metrics in sorted(
+        grouped.items(),
+        key=lambda item: tuple("" if part is None else part for part in item[0]),
+    ):
         category, dataset, model, heuristic, condition = key
         for metric, values in sorted(metrics.items()):
             arr = np.asarray(values, dtype=np.float64)
@@ -135,7 +138,8 @@ def compute_significance(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     out: list[dict[str, Any]] = []
     target_metrics = ["heart_mrr", "mrr", "auc"]
     for (dataset, model, heuristic, condition), comp_rows in sorted(
-        comparisons.items()
+        comparisons.items(),
+        key=lambda item: tuple("" if part is None else part for part in item[0]),
     ):
         baseline_rows = baseline_by_key.get((dataset, model), {})
         shared_seeds = sorted(set(comp_rows) & set(baseline_rows))

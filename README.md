@@ -92,16 +92,20 @@ You can also run everything end-to-end with:
 
 ## Results Summary
 
-Current checked-in outputs are smoke-test scale rather than the full 10-seed study. Based on the current available runs:
+The repository now contains the full 10-seed study matrix for baseline, curriculum, and ablation runs. A compact HeaRT MRR view (baseline vs best curriculum heuristic per dataset/model) is below:
 
-| Condition | Dataset | Model | Metric | Value |
-| --- | --- | --- | --- | ---: |
-| Baseline | Cora | GCN | AUC | 0.9170 |
-| Baseline | Cora | GCN | MRR | 0.3222 |
-| Curriculum (CN) | Cora | GCN | AUC | 0.8760 |
-| Curriculum (CN) | Cora | GCN | MRR | 0.1591 |
+| Dataset | Model | Baseline HeaRT MRR | Best Curriculum HeaRT MRR | Best Heuristic | Relative Change |
+| --- | --- | ---: | ---: | --- | ---: |
+| Cora | GCN | 0.5055 | 0.4124 | AA | -18.43% |
+| Cora | GAT | 0.5226 | 0.5140 | RA | -1.65% |
+| Citeseer | GCN | 0.4761 | 0.4593 | CN | -3.53% |
+| Citeseer | GAT | 0.5781 | 0.5435 | RA | -6.00% |
+| PubMed | GCN | 0.5420 | 0.5480 | AA | +1.12% |
+| PubMed | GAT | 0.4752 | 0.4769 | RA | +0.37% |
 
-Use [experiments/aggregate_results.py](experiments/aggregate_results.py) and [experiments/statistical_analysis.py](experiments/statistical_analysis.py) after full experiment execution to regenerate publication-ready tables.
+Significance testing (`results/summaries/full_significance_table.csv`) contains 69 comparison rows total, with 23 rows for HeaRT MRR and 4 significant HeaRT MRR effects at p < 0.05.
+
+Use [experiments/aggregate_results.py](experiments/aggregate_results.py), [experiments/statistical_analysis.py](experiments/statistical_analysis.py), and [experiments/generate_figures.py](experiments/generate_figures.py) to regenerate publication-ready tables and figures.
 
 ## Citation
 
@@ -124,4 +128,4 @@ Negative results are expected and should be kept. If a curriculum preset or heur
 
 - Datasets are auto-downloaded to `data/` by PyG.
 - The current repository includes phases 1-7 of the planned workflow.
-- Full statistical conclusions require the complete multi-seed experiment matrix, not just smoke runs.
+- Full multi-seed runs are now available under `results/` and summarized under `results/summaries/`.
