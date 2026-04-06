@@ -1,0 +1,232 @@
+\documentclass[11pt]{article}
+
+\usepackage[margin=1in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{siunitx}
+\usepackage{hyperref}
+\usepackage{caption}
+
+\sisetup{round-mode=places,round-precision=4}
+
+\title{Final Study Report\\Curriculum Learning with Difficulty-Aware Negative Sampling for GNN Link Prediction}
+\author{IAI Research Project}
+\date{5 April 2026}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+This report presents the final consolidated results for a graph link-prediction study comparing standard random-negative training with curriculum learning based on structural hard-negative sampling. The pipeline includes GCN and GAT models, three difficulty heuristics (CN, AA, RA), adaptive curriculum scheduling, and HeaRT evaluation. Across full multi-seed runs (baseline: 60, curriculum: 180, ablation: 80), findings are mixed and dataset-dependent: curriculum variants show small gains on PubMed in HeaRT MRR but underperform baseline on Cora and Citeseer under current presets. The strongest degradations occur for Cora with CN-focused curriculum, while baseline or baseline-like settings remain strongest in the Cora+GCN ablation matrix.
+\end{abstract}
+
+\section{Introduction}
+
+Link prediction with graph neural networks (GNNs) is sensitive to negative-sampling strategy. Uniform random negatives are often easy and can inflate apparent ranking quality. This project evaluates whether curriculum learning over difficulty-aware negatives improves robustness under hard-negative evaluation.
+
+The main research question is:
+
+\begin{quote}
+Can adaptive curriculum learning over structurally hard negatives improve HeaRT performance relative to random-negative baseline training?
+\end{quote}
+
+\section{Method Summary}
+
+\subsection{Models and Data}
+
+\begin{itemize}
+\item Models: GCN and GAT.
+\item Datasets: Cora, Citeseer, PubMed.
+\item Split strategy: link-prediction split generated from the graph with fixed seeds.
+\end{itemize}
+
+\subsection{Difficulty-Aware Negatives and Curriculum}
+
+Candidate negative edges are precomputed and scored by one structural heuristic:
+\begin{itemize}
+\item CN (common neighbors)
+\item AA (Adamic-Adar)
+\item RA (resource allocation)
+\end{itemize}
+
+Candidates are bucketed into easy/medium/hard partitions. The default adaptive curriculum uses four phases:
+\begin{center}
+easy\_only $\rightarrow$ easy\_medium $\rightarrow$ mixed $\rightarrow$ hard\_focus.
+\end{center}
+
+\subsection{Evaluation}
+
+Two metric families are reported:
+\begin{itemize}
+\item Standard: AUC, AP, MRR, Hits@K
+\item HeaRT: hard-negative ranking metrics (HeaRT MRR, HeaRT Hits@K)
+\end{itemize}
+
+\section{Experimental Matrix}
+
+\begin{itemize}
+\item Baseline runs: $3$ datasets $\times$ $2$ models $\times$ $10$ seeds $= 60$.
+\item Curriculum runs: $3$ datasets $\times$ $2$ models $\times$ $3$ heuristics $\times$ $10$ seeds $= 180$.
+\item Ablation runs (Cora+GCN): $8$ conditions $\times$ $10$ seeds $= 80$.
+\end{itemize}
+
+All summaries are taken from:
+\begin{itemize}
+\item \texttt{results/summaries/baseline\_summary.csv}
+\item \texttt{results/summaries/curriculum\_summary.csv}
+\item \texttt{results/summaries/ablation\_summary.csv}
+\item \texttt{results/summaries/full\_significance\_table.csv}
+\item \texttt{results/summaries/significance\_tests.csv}
+\end{itemize}
+
+\section{Main Results}
+
+\subsection{Baseline vs Best Curriculum (HeaRT MRR)}
+
+\begin{table}[h]
+\centering
+\caption{Baseline vs best curriculum heuristic by dataset/model using 10-seed mean HeaRT MRR.}
+\begin{tabular}{llcccl}
+\toprule
+Dataset & Model & Baseline & Best Curriculum & Best Heuristic & Relative Change \\
+\midrule
+Cora & GCN & 0.5055 & 0.4124 & AA & -18.43\% \\
+Cora & GAT & 0.5226 & 0.5140 & RA & -1.65\% \\
+Citeseer & GCN & 0.4761 & 0.4593 & CN & -3.53\% \\
+Citeseer & GAT & 0.5781 & 0.5435 & RA & -6.00\% \\
+PubMed & GCN & 0.5420 & 0.5480 & AA & +1.12\% \\
+PubMed & GAT & 0.4752 & 0.4769 & RA & +0.37\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Heuristic-Level HeaRT MRR (Curriculum)}
+
+\begin{table}[h]
+\centering
+\caption{Curriculum HeaRT MRR means by heuristic.}
+\begin{tabular}{llccc}
+\toprule
+Dataset & Model & CN & AA & RA \\
+\midrule
+Cora & GCN & 0.3854 & 0.4124 & 0.4104 \\
+Cora & GAT & 0.3725 & 0.5061 & 0.5140 \\
+Citeseer & GCN & 0.4593 & 0.4585 & 0.4577 \\
+Citeseer & GAT & 0.5297 & 0.5328 & 0.5435 \\
+PubMed & GCN & 0.5475 & 0.5480 & 0.5469 \\
+PubMed & GAT & 0.4760 & 0.4754 & 0.4769 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Ablation Study (Cora + GCN)}
+
+\begin{table}[h]
+\centering
+\caption{Ablation ranking by HeaRT MRR (higher is better).}
+\begin{tabular}{lcc}
+\toprule
+Condition & HeaRT MRR & Relative to \texttt{abl-1} \\
+\midrule
+\texttt{abl-1} (baseline control) & 0.5051 & 0.00\% \\
+\texttt{abl-10} (low thresholds) & 0.3880 & -23.17\% \\
+\texttt{abl-6} (extra intermediate phase) & 0.3816 & -24.46\% \\
+\texttt{abl-5} (skip mixed) & 0.3811 & -24.54\% \\
+\texttt{abl-3} (static easy/hard) & 0.3664 & -27.47\% \\
+\texttt{abl-11} (high thresholds) & 0.3634 & -28.06\% \\
+\texttt{abl-2} (hard from start) & 0.3498 & -30.75\% \\
+\texttt{abl-4} (fixed-phase schedule) & 0.3419 & -32.31\% \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Statistical Results}
+
+From \texttt{full\_significance\_table.csv}:
+
+\begin{itemize}
+\item Total comparison rows: 69
+\item HeaRT MRR rows: 23
+\item Significant HeaRT MRR rows ($p<0.05$): 4
+\end{itemize}
+
+The 4 significant HeaRT MRR effects are:
+
+\begin{table}[h]
+\centering
+\caption{Significant HeaRT MRR curriculum-vs-baseline comparisons (from full significance table).}
+\begin{tabular}{llcccc}
+\toprule
+Dataset & Model & Heuristic & Improvement (\%) & p-value & Direction \\
+\midrule
+Citeseer & GAT & CN & -8.38 & 0.0475 & Worse \\
+Cora & GAT & CN & -28.72 & $3.44\times10^{-6}$ & Worse \\
+Cora & GCN & AA & -18.43 & 0.00135 & Worse \\
+Cora & GCN & RA & -18.81 & 0.00127 & Worse \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Discussion}
+
+\subsection{What Worked}
+\begin{itemize}
+\item Curriculum variants were competitive on PubMed, with small positive HeaRT MRR gains for GCN and GAT in best-heuristic settings.
+\item The codebase successfully supports full multi-seed reproducible baselines, curricula, ablations, significance analysis, and figure generation.
+\end{itemize}
+
+\subsection{What Did Not Work Under Current Presets}
+\begin{itemize}
+\item On Cora and Citeseer, best curriculum settings underperform baseline in HeaRT MRR.
+\item The strongest degradation appears in CN-focused curricula on Cora, especially for GAT.
+\item Cora+GCN ablations indicate baseline-like control remains strongest among tested variants.
+\end{itemize}
+
+\subsection{Interpretation}
+The evidence suggests strong dataset dependence. Hard-negative exposure schedules that appear reasonable globally are not universally beneficial. Threshold design, phase composition, and heuristic choice likely require dataset-specific tuning to avoid over-regularizing or destabilizing ranking behavior.
+
+\section{Limitations}
+
+\begin{itemize}
+\item Curriculum presets were evaluated without extensive per-dataset hyperparameter optimization.
+\item Statistical testing is reported from existing scripts; multiple-comparison correction is not currently integrated in the pipeline.
+\item Current conclusions are bounded to tested datasets (Cora, Citeseer, PubMed) and model family (GCN/GAT).
+\end{itemize}
+
+\section{Conclusion}
+
+The final study does not support a universal claim that the current curriculum presets improve hard-negative link prediction performance. Results are mixed: slight improvements on PubMed and consistent degradations in key Cora/Citeseer settings. The framework itself is complete and reproducible, and provides a solid basis for next-stage work focused on adaptive threshold tuning, alternative schedules, and broader model/data coverage.
+
+\section*{Reproducibility}
+
+Primary commands:
+\begin{verbatim}
+./scripts/run_all_experiments.sh baseline
+./scripts/run_all_experiments.sh curriculum
+./scripts/run_all_experiments.sh ablation
+./scripts/run_all_experiments.sh aggregate
+python experiments/statistical_analysis.py
+python experiments/generate_figures.py
+\end{verbatim}
+
+Compile this report with:
+\begin{verbatim}
+cd docs
+pdflatex final_study_report.tex
+\end{verbatim}
+
+\section*{Reference}
+
+\begin{thebibliography}{1}
+\bibitem{heart2023}
+Benjamin Chamberlain et al.
+\newblock HeaRT: Hard Evaluation for Graph Representation Learning.
+\newblock Advances in Neural Information Processing Systems, 2023.
+\end{thebibliography}
+
+\end{document}

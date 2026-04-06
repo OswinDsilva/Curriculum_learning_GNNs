@@ -10,6 +10,13 @@ __pycache__/
 *.pyo
 *.pyd
 .Python
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.hypothesis/
+.tox/
+.nox/
+.cache/
 
 # Model checkpoints
 checkpoints/
@@ -39,3 +46,6 @@ notebooks/.ipynb_checkpoints/
 *.egg-info/
 dist/
 build/
+
+# Local instruction notes
+INSTRUCTIONS.md
