@@ -1,0 +1,104 @@
+{
+  "config": {
+    "dataset": "citeseer",
+    "model": "gcn",
+    "heuristic": "ra",
+    "hidden_channels": 128,
+    "out_channels": 64,
+    "num_layers": 2,
+    "heads": 4,
+    "dropout": 0.5,
+    "decoder": "inner_product",
+    "lr": 0.01,
+    "epochs": 300,
+    "eval_every": 10,
+    "neg_ratio": 1,
+    "seed": 6,
+    "data_root": "data",
+    "save_dir": "results/curriculum",
+    "checkpoint_dir": "checkpoints",
+    "log_dir": "logs",
+    "precomputed_dir": "data/precomputed",
+    "adaptive": true,
+    "fixed_phase_epochs": 75,
+    "competence_window": 5,
+    "curriculum_preset": "default",
+    "experiment_condition": null,
+    "heart": true,
+    "heart_heuristic": [],
+    "num_neg_per_pos": 100,
+    "no_tensorboard": false
+  },
+  "condition": "curriculum",
+  "standard": {
+    "auc": 0.8819176427967637,
+    "ap": 0.8995869105374286,
+    "mrr": 0.39557807048773774,
+    "hits@10": 0.02197802197802198,
+    "hits@50": 0.10989010989010989,
+    "hits@100": 0.21978021978021978
+  },
+  "heart": {
+    "heart_mrr": 0.45142940186010067,
+    "heart_hits@10": 0.7054945054945055,
+    "heart_hits@50": 0.9538461538461539,
+    "heart_hits@100": 1.0
+  },
+  "phase_history": [
+    {
+      "epoch": 0,
+      "phase_name": "easy_only"
+    },
+    {
+      "epoch": 10,
+      "phase_name": "easy_medium"
+    },
+    {
+      "epoch": 20,
+      "phase_name": "mixed"
+    },
+    {
+      "epoch": 70,
+      "phase_name": "hard_focus"
+    }
+  ],
+  "phase_summary": {
+    "current_phase": 3,
+    "phase_name": "hard_focus",
+    "phase_history": [
+      {
+        "epoch": 0,
+        "phase_name": "easy_only"
+      },
+      {
+        "epoch": 10,
+        "phase_name": "easy_medium"
+      },
+      {
+        "epoch": 20,
+        "phase_name": "mixed"
+      },
+      {
+        "epoch": 70,
+        "phase_name": "hard_focus"
+      }
+    ],
+    "competence": 0.80441304896272,
+    "adaptive": true
+  },
+  "last_val_metrics": {
+    "auc": 0.8079722098235945,
+    "ap": 0.8037761726203092,
+    "mrr": 0.12592119848885236,
+    "hits@10": 0.039647577092511016,
+    "hits@50": 0.1894273127753304,
+    "hits@100": 0.3700440528634361
+  },
+  "final_loss": 0.1816876232624054,
+  "training_time_seconds": 7.12,
+  "bucket_sizes": {
+    "easy": 12140,
+    "medium": 12140,
+    "hard": 12140
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "config": {
+    "dataset": "citeseer",
+    "model": "gcn",
+    "hidden_channels": 128,
+    "out_channels": 64,
+    "num_layers": 2,
+    "heads": 4,
+    "dropout": 0.5,
+    "decoder": "inner_product",
+    "lr": 0.01,
+    "epochs": 300,
+    "eval_every": 10,
+    "neg_ratio": 1,
+    "seed": 2,
+    "data_root": "data",
+    "save_dir": "results/baseline",
+    "checkpoint_dir": "checkpoints",
+    "log_dir": "logs",
+    "heart": true,
+    "heart_heuristic": [],
+    "num_neg_per_pos": 100,
+    "precomputed_dir": "data/precomputed",
+    "experiment_condition": "baseline",
+    "no_tensorboard": false
+  },
+  "condition": "baseline",
+  "standard": {
+    "auc": 0.9118512256973794,
+    "ap": 0.9249448874934941,
+    "mrr": 0.4045571545140925,
+    "hits@10": 0.02197802197802198,
+    "hits@50": 0.10989010989010989,
+    "hits@100": 0.21978021978021978
+  },
+  "heart": {
+    "heart_mrr": 0.5023715113825604,
+    "heart_hits@10": 0.7824175824175824,
+    "heart_hits@50": 0.9582417582417583,
+    "heart_hits@100": 1.0
+  },
+  "training_time_seconds": 16.8
+}

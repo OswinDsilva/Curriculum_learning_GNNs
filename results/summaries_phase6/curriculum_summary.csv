@@ -1,0 +1,7 @@
+dataset,model,heuristic,condition,metric,mean,std,n_seeds
+cora,gcn,cn,curriculum,ap,0.8754497152007448,0.0,1
+cora,gcn,cn,curriculum,auc,0.8759942245858373,0.0,1
+cora,gcn,cn,curriculum,hits@10,0.018975332068311195,0.0,1
+cora,gcn,cn,curriculum,hits@100,0.1840607210626186,0.0,1
+cora,gcn,cn,curriculum,hits@50,0.09297912713472485,0.0,1
+cora,gcn,cn,curriculum,mrr,0.1590589054598588,0.0,1

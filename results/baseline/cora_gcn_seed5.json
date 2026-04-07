@@ -1,0 +1,43 @@
+{
+  "config": {
+    "dataset": "cora",
+    "model": "gcn",
+    "hidden_channels": 128,
+    "out_channels": 64,
+    "num_layers": 2,
+    "heads": 4,
+    "dropout": 0.5,
+    "decoder": "inner_product",
+    "lr": 0.01,
+    "epochs": 300,
+    "eval_every": 10,
+    "neg_ratio": 1,
+    "seed": 5,
+    "data_root": "data",
+    "save_dir": "results/baseline",
+    "checkpoint_dir": "checkpoints",
+    "log_dir": "logs",
+    "heart": true,
+    "heart_heuristic": [],
+    "num_neg_per_pos": 100,
+    "precomputed_dir": "data/precomputed",
+    "experiment_condition": "baseline",
+    "no_tensorboard": false
+  },
+  "condition": "baseline",
+  "standard": {
+    "auc": 0.9213945968912141,
+    "ap": 0.9355437884355364,
+    "mrr": 0.5081717820911156,
+    "hits@10": 0.018975332068311195,
+    "hits@50": 0.09487666034155598,
+    "hits@100": 0.18975332068311196
+  },
+  "heart": {
+    "heart_mrr": 0.5406311285886979,
+    "heart_hits@10": 0.7817836812144212,
+    "heart_hits@50": 0.967741935483871,
+    "heart_hits@100": 0.9962049335863378
+  },
+  "training_time_seconds": 7.31
+}

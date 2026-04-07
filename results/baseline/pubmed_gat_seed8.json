@@ -1,0 +1,43 @@
+{
+  "config": {
+    "dataset": "pubmed",
+    "model": "gat",
+    "hidden_channels": 128,
+    "out_channels": 64,
+    "num_layers": 2,
+    "heads": 4,
+    "dropout": 0.5,
+    "decoder": "inner_product",
+    "lr": 0.01,
+    "epochs": 300,
+    "eval_every": 10,
+    "neg_ratio": 1,
+    "seed": 8,
+    "data_root": "data",
+    "save_dir": "results/baseline",
+    "checkpoint_dir": "checkpoints",
+    "log_dir": "logs",
+    "heart": true,
+    "heart_heuristic": [],
+    "num_neg_per_pos": 100,
+    "precomputed_dir": "data/precomputed",
+    "experiment_condition": "baseline",
+    "no_tensorboard": false
+  },
+  "condition": "baseline",
+  "standard": {
+    "auc": 0.9535570196731353,
+    "ap": 0.9532030244647814,
+    "mrr": 0.11120310032113108,
+    "hits@10": 0.002256317689530686,
+    "hits@50": 0.01128158844765343,
+    "hits@100": 0.02256317689530686
+  },
+  "heart": {
+    "heart_mrr": 0.48312170288520084,
+    "heart_hits@10": 0.8731949458483754,
+    "heart_hits@50": 0.983754512635379,
+    "heart_hits@100": 1.0
+  },
+  "training_time_seconds": 233.08
+}

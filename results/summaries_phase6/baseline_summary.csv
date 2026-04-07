@@ -1,0 +1,7 @@
+dataset,model,heuristic,condition,metric,mean,std,n_seeds
+cora,gcn,,baseline,ap,0.9250764124835068,0.0,1
+cora,gcn,,baseline,auc,0.9169694198301224,0.0,1
+cora,gcn,,baseline,hits@10,0.018975332068311195,0.0,1
+cora,gcn,,baseline,hits@100,0.18975332068311196,0.0,1
+cora,gcn,,baseline,hits@50,0.09487666034155598,0.0,1
+cora,gcn,,baseline,mrr,0.3222036019342771,0.0,1

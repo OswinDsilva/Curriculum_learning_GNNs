@@ -1,0 +1,104 @@
+{
+  "config": {
+    "dataset": "pubmed",
+    "model": "gat",
+    "heuristic": "ra",
+    "hidden_channels": 128,
+    "out_channels": 64,
+    "num_layers": 2,
+    "heads": 4,
+    "dropout": 0.5,
+    "decoder": "inner_product",
+    "lr": 0.01,
+    "epochs": 300,
+    "eval_every": 10,
+    "neg_ratio": 1,
+    "seed": 0,
+    "data_root": "data",
+    "save_dir": "results/curriculum",
+    "checkpoint_dir": "checkpoints",
+    "log_dir": "logs",
+    "precomputed_dir": "data/precomputed",
+    "adaptive": true,
+    "fixed_phase_epochs": 75,
+    "competence_window": 5,
+    "curriculum_preset": "default",
+    "experiment_condition": null,
+    "heart": true,
+    "heart_heuristic": [],
+    "num_neg_per_pos": 100,
+    "no_tensorboard": false
+  },
+  "condition": "curriculum",
+  "standard": {
+    "auc": 0.946570274928645,
+    "ap": 0.9448899239836872,
+    "mrr": 0.06259935398163334,
+    "hits@10": 0.002256317689530686,
+    "hits@50": 0.01105595667870036,
+    "hits@100": 0.022337545126353792
+  },
+  "heart": {
+    "heart_mrr": 0.488968727074377,
+    "heart_hits@10": 0.8731949458483754,
+    "heart_hits@50": 0.9826263537906137,
+    "heart_hits@100": 0.9997743682310469
+  },
+  "phase_history": [
+    {
+      "epoch": 0,
+      "phase_name": "easy_only"
+    },
+    {
+      "epoch": 10,
+      "phase_name": "easy_medium"
+    },
+    {
+      "epoch": 20,
+      "phase_name": "mixed"
+    },
+    {
+      "epoch": 30,
+      "phase_name": "hard_focus"
+    }
+  ],
+  "phase_summary": {
+    "current_phase": 3,
+    "phase_name": "hard_focus",
+    "phase_history": [
+      {
+        "epoch": 0,
+        "phase_name": "easy_only"
+      },
+      {
+        "epoch": 10,
+        "phase_name": "easy_medium"
+      },
+      {
+        "epoch": 20,
+        "phase_name": "mixed"
+      },
+      {
+        "epoch": 30,
+        "phase_name": "hard_focus"
+      }
+    ],
+    "competence": 0.9448077405544189,
+    "adaptive": true
+  },
+  "last_val_metrics": {
+    "auc": 0.9446300046266731,
+    "ap": 0.942719175124243,
+    "mrr": 0.10061626489842627,
+    "hits@10": 0.004512635379061372,
+    "hits@50": 0.02256317689530686,
+    "hits@100": 0.04512635379061372
+  },
+  "final_loss": 0.47479361295700073,
+  "training_time_seconds": 139.1,
+  "bucket_sizes": {
+    "easy": 118200,
+    "medium": 118200,
+    "hard": 118200
+  }
+}

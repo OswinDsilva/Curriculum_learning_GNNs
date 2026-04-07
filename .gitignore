@@ -24,9 +24,6 @@ checkpoints/
 # Training logs and TensorBoard
 logs/
 
-# Experiment results
-results/
-
 # Pre-computed heuristic scores
 *.npz
 

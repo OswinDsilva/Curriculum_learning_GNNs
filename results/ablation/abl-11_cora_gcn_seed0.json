@@ -1,0 +1,88 @@
+{
+  "config": {
+    "dataset": "cora",
+    "model": "gcn",
+    "heuristic": "cn",
+    "hidden_channels": 128,
+    "out_channels": 64,
+    "num_layers": 2,
+    "heads": 4,
+    "dropout": 0.5,
+    "decoder": "inner_product",
+    "lr": 0.01,
+    "epochs": 300,
+    "eval_every": 10,
+    "neg_ratio": 1,
+    "seed": 0,
+    "data_root": "data",
+    "save_dir": "results/ablation",
+    "checkpoint_dir": "checkpoints",
+    "log_dir": "logs",
+    "precomputed_dir": "data/precomputed",
+    "adaptive": true,
+    "fixed_phase_epochs": 75,
+    "competence_window": 5,
+    "curriculum_preset": "high_thresholds",
+    "experiment_condition": "abl-11",
+    "heart": true,
+    "heart_heuristic": [],
+    "num_neg_per_pos": 100,
+    "no_tensorboard": false
+  },
+  "condition": "abl-11",
+  "standard": {
+    "auc": 0.8872317979037119,
+    "ap": 0.8943705305740353,
+    "mrr": 0.19550093788194506,
+    "hits@10": 0.018975332068311195,
+    "hits@50": 0.09487666034155598,
+    "hits@100": 0.1840607210626186
+  },
+  "heart": {
+    "heart_mrr": 0.3812622383425011,
+    "heart_hits@10": 0.6622390891840607,
+    "heart_hits@50": 0.9487666034155597,
+    "heart_hits@100": 0.9981024667931688
+  },
+  "phase_history": [
+    {
+      "epoch": 0,
+      "phase_name": "easy_only"
+    },
+    {
+      "epoch": 10,
+      "phase_name": "easy_medium"
+    }
+  ],
+  "phase_summary": {
+    "current_phase": 1,
+    "phase_name": "easy_medium",
+    "phase_history": [
+      {
+        "epoch": 0,
+        "phase_name": "easy_only"
+      },
+      {
+        "epoch": 10,
+        "phase_name": "easy_medium"
+      }
+    ],
+    "competence": 0.8150096141334991,
+    "adaptive": true
+  },
+  "last_val_metrics": {
+    "auc": 0.8163339068079631,
+    "ap": 0.8277535110421161,
+    "mrr": 0.184940432380493,
+    "hits@10": 0.03802281368821293,
+    "hits@50": 0.17870722433460076,
+    "hits@100": 0.34220532319391633
+  },
+  "final_loss": 0.005100856069475412,
+  "training_time_seconds": 4.66,
+  "bucket_sizes": {
+    "easy": 1408,
+    "medium": 1408,
+    "hard": 1408
+  }
+}

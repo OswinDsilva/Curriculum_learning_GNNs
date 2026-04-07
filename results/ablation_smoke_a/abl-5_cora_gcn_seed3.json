@@ -1,0 +1,83 @@
+{
+  "config": {
+    "dataset": "cora",
+    "model": "gcn",
+    "heuristic": "cn",
+    "hidden_channels": 128,
+    "out_channels": 64,
+    "num_layers": 2,
+    "heads": 4,
+    "dropout": 0.5,
+    "decoder": "inner_product",
+    "lr": 0.01,
+    "epochs": 10,
+    "eval_every": 10,
+    "neg_ratio": 1,
+    "seed": 3,
+    "data_root": "data",
+    "save_dir": "results/ablation_smoke_a",
+    "checkpoint_dir": "checkpoints",
+    "log_dir": "logs",
+    "precomputed_dir": "data/precomputed",
+    "adaptive": true,
+    "fixed_phase_epochs": 75,
+    "competence_window": 5,
+    "curriculum_preset": "skip_mixed",
+    "experiment_condition": "abl-5",
+    "heart": false,
+    "heart_heuristic": [],
+    "num_neg_per_pos": 100,
+    "no_tensorboard": true
+  },
+  "condition": "abl-5",
+  "standard": {
+    "auc": 0.8009642493221809,
+    "ap": 0.8090622447455154,
+    "mrr": 0.09927399685147908,
+    "hits@10": 0.018975332068311195,
+    "hits@50": 0.09108159392789374,
+    "hits@100": 0.18216318785578747
+  },
+  "heart": {},
+  "phase_history": [
+    {
+      "epoch": 0,
+      "phase_name": "easy_only"
+    },
+    {
+      "epoch": 10,
+      "phase_name": "easy_medium"
+    }
+  ],
+  "phase_summary": {
+    "current_phase": 1,
+    "phase_name": "easy_medium",
+    "phase_history": [
+      {
+        "epoch": 0,
+        "phase_name": "easy_only"
+      },
+      {
+        "epoch": 10,
+        "phase_name": "easy_medium"
+      }
+    ],
+    "competence": 0.0,
+    "adaptive": true
+  },
+  "last_val_metrics": {
+    "auc": 0.8051439228556144,
+    "ap": 0.7962665948681635,
+    "mrr": 0.11266084291933025,
+    "hits@10": 0.03802281368821293,
+    "hits@50": 0.16730038022813687,
+    "hits@100": 0.3231939163498099
+  },
+  "final_loss": 0.6355007886886597,
+  "training_time_seconds": 0.22,
+  "bucket_sizes": {
+    "easy": 1408,
+    "medium": 1408,
+    "hard": 1408
+  }
+}

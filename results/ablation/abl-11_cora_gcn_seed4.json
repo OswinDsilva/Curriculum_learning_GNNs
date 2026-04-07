@@ -1,0 +1,88 @@
+{
+  "config": {
+    "dataset": "cora",
+    "model": "gcn",
+    "heuristic": "cn",
+    "hidden_channels": 128,
+    "out_channels": 64,
+    "num_layers": 2,
+    "heads": 4,
+    "dropout": 0.5,
+    "decoder": "inner_product",
+    "lr": 0.01,
+    "epochs": 300,
+    "eval_every": 10,
+    "neg_ratio": 1,
+    "seed": 4,
+    "data_root": "data",
+    "save_dir": "results/ablation",
+    "checkpoint_dir": "checkpoints",
+    "log_dir": "logs",
+    "precomputed_dir": "data/precomputed",
+    "adaptive": true,
+    "fixed_phase_epochs": 75,
+    "competence_window": 5,
+    "curriculum_preset": "high_thresholds",
+    "experiment_condition": "abl-11",
+    "heart": true,
+    "heart_heuristic": [],
+    "num_neg_per_pos": 100,
+    "no_tensorboard": false
+  },
+  "condition": "abl-11",
+  "standard": {
+    "auc": 0.8881175534423844,
+    "ap": 0.8926922630639196,
+    "mrr": 0.1926582189318294,
+    "hits@10": 0.018975332068311195,
+    "hits@50": 0.09297912713472485,
+    "hits@100": 0.18785578747628084
+  },
+  "heart": {
+    "heart_mrr": 0.37142526145852006,
+    "heart_hits@10": 0.6584440227703985,
+    "heart_hits@50": 0.9544592030360531,
+    "heart_hits@100": 1.0
+  },
+  "phase_history": [
+    {
+      "epoch": 0,
+      "phase_name": "easy_only"
+    },
+    {
+      "epoch": 10,
+      "phase_name": "easy_medium"
+    }
+  ],
+  "phase_summary": {
+    "current_phase": 1,
+    "phase_name": "easy_medium",
+    "phase_history": [
+      {
+        "epoch": 0,
+        "phase_name": "easy_only"
+      },
+      {
+        "epoch": 10,
+        "phase_name": "easy_medium"
+      }
+    ],
+    "competence": 0.8472032268790933,
+    "adaptive": true
+  },
+  "last_val_metrics": {
+    "auc": 0.8419523196807819,
+    "ap": 0.852826102799046,
+    "mrr": 0.1855141856742961,
+    "hits@10": 0.03802281368821293,
+    "hits@50": 0.18250950570342206,
+    "hits@100": 0.3612167300380228
+  },
+  "final_loss": 0.004649215843528509,
+  "training_time_seconds": 4.61,
+  "bucket_sizes": {
+    "easy": 1408,
+    "medium": 1408,
+    "hard": 1408
+  }
+}

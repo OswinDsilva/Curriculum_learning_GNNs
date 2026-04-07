@@ -1,0 +1,112 @@
+{
+  "config": {
+    "dataset": "cora",
+    "model": "gcn",
+    "heuristic": "cn",
+    "hidden_channels": 128,
+    "out_channels": 64,
+    "num_layers": 2,
+    "heads": 4,
+    "dropout": 0.5,
+    "decoder": "inner_product",
+    "lr": 0.01,
+    "epochs": 300,
+    "eval_every": 10,
+    "neg_ratio": 1,
+    "seed": 8,
+    "data_root": "data",
+    "save_dir": "results/ablation",
+    "checkpoint_dir": "checkpoints",
+    "log_dir": "logs",
+    "precomputed_dir": "data/precomputed",
+    "adaptive": true,
+    "fixed_phase_epochs": 75,
+    "competence_window": 5,
+    "curriculum_preset": "extra_intermediate",
+    "experiment_condition": "abl-6",
+    "heart": true,
+    "heart_heuristic": [],
+    "num_neg_per_pos": 100,
+    "no_tensorboard": false
+  },
+  "condition": "abl-6",
+  "standard": {
+    "auc": 0.8648898746619906,
+    "ap": 0.8740339999747244,
+    "mrr": 0.15935322133279312,
+    "hits@10": 0.018975332068311195,
+    "hits@50": 0.09297912713472485,
+    "hits@100": 0.1840607210626186
+  },
+  "heart": {
+    "heart_mrr": 0.3564682613586136,
+    "heart_hits@10": 0.6413662239089184,
+    "heart_hits@50": 0.9297912713472486,
+    "heart_hits@100": 1.0
+  },
+  "phase_history": [
+    {
+      "epoch": 0,
+      "phase_name": "easy_only"
+    },
+    {
+      "epoch": 10,
+      "phase_name": "easy_medium"
+    },
+    {
+      "epoch": 20,
+      "phase_name": "bridge"
+    },
+    {
+      "epoch": 30,
+      "phase_name": "mixed"
+    },
+    {
+      "epoch": 40,
+      "phase_name": "hard_focus"
+    }
+  ],
+  "phase_summary": {
+    "current_phase": 4,
+    "phase_name": "hard_focus",
+    "phase_history": [
+      {
+        "epoch": 0,
+        "phase_name": "easy_only"
+      },
+      {
+        "epoch": 10,
+        "phase_name": "easy_medium"
+      },
+      {
+        "epoch": 20,
+        "phase_name": "bridge"
+      },
+      {
+        "epoch": 30,
+        "phase_name": "mixed"
+      },
+      {
+        "epoch": 40,
+        "phase_name": "hard_focus"
+      }
+    ],
+    "competence": 0.8281629053477714,
+    "adaptive": true
+  },
+  "last_val_metrics": {
+    "auc": 0.8282178432534806,
+    "ap": 0.8271504812695214,
+    "mrr": 0.1801356296480086,
+    "hits@10": 0.03802281368821293,
+    "hits@50": 0.18250950570342206,
+    "hits@100": 0.3231939163498099
+  },
+  "final_loss": 0.021046318113803864,
+  "training_time_seconds": 4.45,
+  "bucket_sizes": {
+    "easy": 1408,
+    "medium": 1408,
+    "hard": 1408
+  }
+}

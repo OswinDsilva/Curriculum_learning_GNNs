@@ -1,0 +1,43 @@
+{
+  "config": {
+    "dataset": "cora",
+    "model": "gcn",
+    "hidden_channels": 128,
+    "out_channels": 64,
+    "num_layers": 2,
+    "heads": 4,
+    "dropout": 0.5,
+    "decoder": "inner_product",
+    "lr": 0.01,
+    "epochs": 300,
+    "eval_every": 10,
+    "neg_ratio": 1,
+    "seed": 9,
+    "data_root": "data",
+    "save_dir": "results/ablation",
+    "checkpoint_dir": "checkpoints",
+    "log_dir": "logs",
+    "heart": true,
+    "heart_heuristic": [],
+    "num_neg_per_pos": 100,
+    "precomputed_dir": "data/precomputed",
+    "experiment_condition": "abl-1",
+    "no_tensorboard": false
+  },
+  "condition": "abl-1",
+  "standard": {
+    "auc": 0.9167137749388792,
+    "ap": 0.929307774598747,
+    "mrr": 0.25566288533232506,
+    "hits@10": 0.018975332068311195,
+    "hits@50": 0.09297912713472485,
+    "hits@100": 0.18785578747628084
+  },
+  "heart": {
+    "heart_mrr": 0.5338965532563583,
+    "heart_hits@10": 0.7817836812144212,
+    "heart_hits@50": 0.9601518026565465,
+    "heart_hits@100": 0.9981024667931688
+  },
+  "training_time_seconds": 6.96
+}

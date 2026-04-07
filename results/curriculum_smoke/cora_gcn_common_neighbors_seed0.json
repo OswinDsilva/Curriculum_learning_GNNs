@@ -1,0 +1,70 @@
+{
+  "config": {
+    "dataset": "cora",
+    "model": "gcn",
+    "heuristic": "cn",
+    "hidden_channels": 128,
+    "out_channels": 64,
+    "num_layers": 2,
+    "heads": 4,
+    "dropout": 0.5,
+    "decoder": "inner_product",
+    "lr": 0.01,
+    "epochs": 20,
+    "eval_every": 10,
+    "neg_ratio": 1,
+    "seed": 0,
+    "data_root": "data",
+    "save_dir": "results/curriculum_smoke",
+    "checkpoint_dir": "checkpoints",
+    "log_dir": "logs",
+    "precomputed_dir": "data/precomputed",
+    "adaptive": true,
+    "fixed_phase_epochs": 75,
+    "competence_window": 5,
+    "no_tensorboard": true
+  },
+  "standard": {
+    "auc": 0.8759942245858373,
+    "ap": 0.8754497152007448,
+    "mrr": 0.1590589054598588,
+    "hits@10": 0.018975332068311195,
+    "hits@50": 0.09297912713472485,
+    "hits@100": 0.1840607210626186
+  },
+  "phase_summary": {
+    "current_phase": 2,
+    "phase_name": "mixed",
+    "phase_history": [
+      {
+        "epoch": 0,
+        "phase_name": "easy_only"
+      },
+      {
+        "epoch": 10,
+        "phase_name": "easy_medium"
+      },
+      {
+        "epoch": 20,
+        "phase_name": "mixed"
+      }
+    ],
+    "competence": 0.0,
+    "adaptive": true
+  },
+  "last_val_metrics": {
+    "auc": 0.8631034133788258,
+    "ap": 0.8469584749636256,
+    "mrr": 0.13304533876603483,
+    "hits@10": 0.034220532319391636,
+    "hits@50": 0.17870722433460076,
+    "hits@100": 0.33840304182509506
+  },
+  "final_loss": 0.4116818606853485,
+  "training_time_seconds": 0.36,
+  "bucket_sizes": {
+    "easy": 1408,
+    "medium": 1408,
+    "hard": 1408
+  }
+}
