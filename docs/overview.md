@@ -18,6 +18,9 @@ A 4-phase curriculum that begins with easy random negatives and
 progressively transitions to hard negatives selected by graph heuristics
 (Common Neighbors, Adamic-Adar, Resource Allocation).
 
+For implementation-oriented pseudocode of the main pipeline, see
+`docs/essential_project_pseudocode.md`.
+
 ---
 
 ## Directory Layout
